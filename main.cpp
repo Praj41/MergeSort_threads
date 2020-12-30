@@ -53,6 +53,10 @@ void merge(int64_t arr[], int64_t l, int64_t m, int64_t r)
         j++;
         k++;
     }
+
+    delete[] L;
+    delete[] R;
+
 }
 
 /* l is for left index and r is right index of the
