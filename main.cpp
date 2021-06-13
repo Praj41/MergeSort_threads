@@ -2,6 +2,7 @@
 #include <thread>
 #include <vector>
 #include <functional>
+#include <cstring>
 
 #define int64_t long long int
 
@@ -191,13 +192,13 @@ int main() {
     printf("Cool Down time : ");
     std::this_thread::sleep_for(5s);
     t.lap_reset();
-    scheduler<quickSort> (arr1, size);
+    scheduler<mergeSort> (arr, size);
     printf("Quick Sort time : ");
     t.lap_reset();
     printf("Cool Down time : ");
     std::this_thread::sleep_for(5s);
     t.lap_reset();
-    scheduler<mergeSort> (arr, size);
+    scheduler<quickSort> (arr1, size);
     //mergeSort(arr, 0, size - 1);
 
     //std::sort(arr, arr + size);
