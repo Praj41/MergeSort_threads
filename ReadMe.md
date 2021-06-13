@@ -6,7 +6,7 @@
 #### Quick Sort provides some speedup compared to Merge Sort
 #### CPU Intel core i7-9750H 6C/12T 4Ghz all core
 #### 8 Threads spawned for sorting and arrays merged with merge tree
-### As Tested with 40960k long int(s):
+### As Tested with 40960k long int(s) in default release config:
 **msvc**<br>
 Quick sort ≃ 1 sec<br>
 Merge sort ≃ 2.5 sec<br><br>
