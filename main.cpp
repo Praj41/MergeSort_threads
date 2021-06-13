@@ -1,6 +1,7 @@
 #include <iostream>
 #include <thread>
 #include <vector>
+#include <functional>
 
 #define int64_t long long int
 
@@ -76,6 +77,40 @@ void mergeSort(int64_t arr[], int64_t l, int64_t r)
     }
 }
 
+int64_t partition (int64_t arr[], int64_t low, int64_t high)
+{
+    int64_t pivot = arr[high]; // pivot
+    int64_t i = (low - 1); // Index of smaller element and indicates the right position of pivot found so far
+
+    for (int64_t j = low; j <= high - 1; j++)
+    {
+        // If current element is smaller than the pivot
+        if (arr[j] < pivot)
+        {
+            i++; // increment index of smaller element
+            std::swap(arr[i], arr[j]);
+        }
+    }
+    std::swap(arr[i + 1], arr[high]);
+    return (i + 1);
+}
+
+void quickSort(int64_t arr[], int64_t low, int64_t high)
+{
+    if (low < high)
+    {
+        /* pi is partitioning index, arr[p] is now
+        at right place */
+        int64_t pi = partition(arr, low, high);
+
+        // Separately sort elements before
+        // partition and after partition
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+
+template<void (*sorter) (int64_t*, int64_t, int64_t)>
 void scheduler(int64_t *arr, int64_t size) {
 
     size_t x[8], y[8];
@@ -89,7 +124,7 @@ void scheduler(int64_t *arr, int64_t size) {
     y[7] = size - 1;
 
     for (int i = 0; i < 8; ++i) {
-        work.emplace_back(mergeSort, arr, x[i], y[i]);
+        work.emplace_back(sorter, arr, x[i], y[i]);
     }
 
     for (auto &workThread : work)
@@ -125,7 +160,7 @@ void printArr(long long int *arr, long long int size) {
     }
 }
 
-void checkSorted(long long int *arr, long long int size) {
+void checkSorted(const long long int *arr, long long int size) {
     for (long long int i = 1; i < size; ++i) {
         if (arr[i - 1] > arr[i]){
             printf("Not sorted\n");
@@ -138,34 +173,47 @@ void checkSorted(long long int *arr, long long int size) {
 int main() {
     std::cout << "Hello, World!" << std::endl;
 
-    size_t size;
+    using namespace std::chrono_literals;
 
-    std::cin >> size;
+    int64_t size = 40960000;
 
-    auto *arr = RNG(size, -10000, 10000);
+    //std::cin >> size;
+
+    auto *arr = RNG(size, INT32_MIN, INT32_MAX);
+
+    auto *arr1 = (int64_t*) malloc(sizeof(int64_t) * size);
+    std::memcpy(arr1, arr, sizeof(int64_t) * size);
     Timer t;
 
     //printArr(arr, size);
 
     //checkSorted(arr, size);
-
-    scheduler(arr, size);
-
+    printf("Cool Down time : ");
+    std::this_thread::sleep_for(5s);
+    t.lap_reset();
+    scheduler<quickSort> (arr1, size);
+    printf("Quick Sort time : ");
+    t.lap_reset();
+    printf("Cool Down time : ");
+    std::this_thread::sleep_for(5s);
+    t.lap_reset();
+    scheduler<mergeSort> (arr, size);
     //mergeSort(arr, 0, size - 1);
 
     //std::sort(arr, arr + size);
 
-    t.lap();
+    printf("Merge Sort time : ");
+    t.lap_reset();
 
     checkSorted(arr, size);
-
+    checkSorted(arr1, size);
     //std::cout << "\n\n\nSorted array here!!!" << std::endl;
 
     //printArr(arr, size);
 
     delete[] arr;
 
-    system("pause");
+    //system("pause");
 
     return 0;
 }
